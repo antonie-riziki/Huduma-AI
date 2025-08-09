@@ -1,0 +1,1062 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huduma AI - Your AI-Powered Government Assistant</title>
+    <meta name="description" content="Access all government services seamlessly through multiple communication channels with Huduma AI">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ef4434;
+            --primary-light: #f56454;
+            --primary-dark: #d93324;
+            --government: #1e40af;
+            --success: #059669;
+            --background: #ffffff;
+            --foreground: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --card: #ffffff;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--foreground);
+            background: linear-gradient(180deg, #ffffff, #fafafa);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--foreground);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--government));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--government));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--foreground);
+            border: 2px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, rgba(239, 68, 52, 0.05), rgba(30, 64, 175, 0.05));
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text {
+            space-y: 2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--government));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: -1rem;
+            left: -1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Channels Section */
+        .channels {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.25rem;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .channel-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .channel-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .whatsapp { background: rgba(37, 211, 102, 0.1); color: #25d366; }
+        .telegram { background: rgba(0, 136, 204, 0.1); color: #0088cc; }
+        .sms { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+        .web { background: rgba(239, 68, 52, 0.1); color: var(--primary); }
+        .voice { background: rgba(251, 146, 60, 0.1); color: #fb923c; }
+
+        .channel-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .channel-card p {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background: rgba(249, 250, 251, 0.5);
+        }
+
+        .services-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .check-icon {
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        .service-name {
+            font-weight: 500;
+        }
+
+        .service-category {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .secure { background: rgba(239, 68, 52, 0.1); color: var(--primary); }
+        .available { background: rgba(30, 64, 175, 0.1); color: var(--government); }
+        .multilang { background: rgba(5, 150, 105, 0.1); color: var(--success); }
+
+        /* CTA Section */
+        .cta {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--government));
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-outline-white:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 1rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--government));
+            color: white;
+            padding: 1rem;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: between;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+        }
+
+        .message.bot .message-content {
+            background: #f3f4f6;
+            color: var(--foreground);
+        }
+
+        .message.user .message-content {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .chat-input button {
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .services-content {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .chat-window {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="bot" style="color: white; width: 24px; height: 24px;"></i>
+                    </div>
+                    <span class="logo-text">Huduma AI</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#services">Services</a>
+                    <a href="#channels">Channels</a>
+                    <a href="#about">About</a>
+                    <a href="#" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="badge">
+                        🇰🇪 Government of Kenya Digital Services
+                    </div>
+                    <h1>
+                        Your AI-Powered<br>
+                        <span class="gradient-text">Government Assistant</span>
+                    </h1>
+                    <p>
+                        Access all government services seamlessly through multiple communication channels.
+                        From birth certificates to tax returns, Huduma AI makes government services accessible to everyone.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#" class="btn btn-primary">
+                            <i data-lucide="message-circle"></i>
+                            Start Chat
+                        </a>
+                        <a href="#" class="btn btn-outline">
+                            <i data-lucide="arrow-right"></i>
+                            View Services
+                        </a>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-value">500K+</div>
+                            <div class="stat-label">Citizens Served</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">Service Availability</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">50+</div>
+                            <div class="stat-label">Government Services</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">98%</div>
+                            <div class="stat-label">Success Rate</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://academyafric.com/storage/2024/01/Bokgone-Technical-School-MTN-1.jpeg" alt="HudumaAI Communication Channels">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span style="font-weight: 600;">AI Assistant Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Communication Channels -->
+    <section class="channels" id="channels">
+        <div class="container">
+            <div class="section-header">
+                <h2>Choose Your <span class="gradient-text">Communication Channel</span></h2>
+                <p>
+                    Access government services through your preferred platform. Our AI assistant is available
+                    across multiple channels to ensure everyone can get the help they need.
+                </p>
+            </div>
+            <div class="channels-grid">
+                <div class="channel-card">
+                    <div class="channel-icon whatsapp">
+                        <i data-lucide="message-square"></i>
+                    </div>
+                    <h3>WhatsApp Bot</h3>
+                    <p>Chat with us on WhatsApp for instant government service support</p>
+                    <a href="#" class="btn btn-outline">Get Started</a>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon telegram">
+                        <i data-lucide="send"></i>
+                    </div>
+                    <h3>Telegram Bot</h3>
+                    <p>Get help through our Telegram bot with rich interactive features</p>
+                    <a href="#" class="btn btn-outline">Get Started</a>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon sms">
+                        <i data-lucide="smartphone"></i>
+                    </div>
+                    <h3>SMS Service</h3>
+                    <p>Access services via SMS for areas with limited internet connectivity</p>
+                    <a href="#" class="btn btn-outline">Get Started</a>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon web">
+                        <i data-lucide="globe"></i>
+                    </div>
+                    <h3>Web Chat</h3>
+                    <p>Full-featured web interface for comprehensive service access</p>
+                    <a href="#" class="btn btn-outline">Get Started</a>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon voice">
+                        <i data-lucide="mic"></i>
+                    </div>
+                    <h3>AI Voice Agent</h3>
+                    <p>Call our AI voice assistant for voice-guided service support</p>
+                    <a href="#" class="btn btn-outline">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="services-content">
+                <div>
+                    <h2><span class="gradient-text">50+ Government Services</span> at Your Fingertips</h2>
+                    <p style="font-size: 1.25rem; color: var(--muted); margin-bottom: 2rem;">
+                        From document applications to service payments, access all government services
+                        through our intelligent AI assistant. No more long queues or complex procedures.
+                    </p>
+                    <div class="services-grid">
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Job Applications</div>
+                                <div class="service-category">Employment</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Tender Applications</div>
+                                <div class="service-category">Business</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Birth Certificates</div>
+                                <div class="service-category">Documents</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Tax Returns</div>
+                                <div class="service-category">Finance</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Driving License</div>
+                                <div class="service-category">Transport</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Parking Fees</div>
+                                <div class="service-category">Transport</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Business Registration</div>
+                                <div class="service-category">Business</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <i data-lucide="check-circle" class="check-icon"></i>
+                            <div>
+                                <div class="service-name">Marriage Certificates</div>
+                                <div class="service-category">Documents</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-item">
+                        <i data-lucide="check-circle" class="check-icon"></i>
+                        <div>
+                            <div class="service-name">Over 22,000 Government services now available from 100+ Ministries, Counties, Departments and Agencies</div>
+<!--                            <div class="service-category">Documents</div>-->
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-primary" style="margin-top: 20px;">
+                        <i data-lucide="arrow-right"></i>
+                        Explore All Services
+                    </a>
+                </div>
+                <div>
+                    <img src="https://cdn.radioafrica.digital/image/2025/07/aa0a803b-4182-41ae-b746-677807eb5b2e.jpeg" alt="HudumaAI Chatbot Interface" style="width: 100%; border-radius: 16px; box-shadow: var(--shadow-lg);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose <span class="gradient-text">Huduma AI?</span></h2>
+                <p>Built with cutting-edge AI technology to serve Kenyan citizens better.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon secure">
+                        <i data-lucide="shield"></i>
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>Bank-level security with end-to-end encryption for all your sensitive information.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon available">
+                        <i data-lucide="clock"></i>
+                    </div>
+                    <h3>24/7 Availability</h3>
+                    <p>Get help anytime, anywhere. Our AI assistant never sleeps and is always ready to help.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon multilang">
+                        <i data-lucide="users"></i>
+                    </div>
+                    <h3>Multi-Language Support</h3>
+                    <p>Communicate in English, Swahili, or your local language for better accessibility.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Join thousands of Kenyans who are already using Huduma AI for their government service needs.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-secondary">
+                    <i data-lucide="bot"></i>
+                    Try Demo
+                </a>
+                <a href="#" class="btn btn-outline-white">
+                    <i data-lucide="phone"></i>
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <div class="logo-icon" style="width: 32px; height: 32px;">
+                            <i data-lucide="bot" style="color: white; width: 20px; height: 20px;"></i>
+                        </div>
+                        <span style="font-size: 1.25rem; font-weight: 700;">Huduma AI</span>
+                    </div>
+                    <p style="color: #9ca3af;">Bridging the gap between citizens and government services through AI technology.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Document Applications</a></li>
+                        <li><a href="#">Tax Services</a></li>
+                        <li><a href="#">License Applications</a></li>
+                        <li><a href="#">Payment Services</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Channels</h4>
+                    <ul>
+                        <li><a href="#">WhatsApp Bot</a></li>
+                        <li><a href="#">Telegram Bot</a></li>
+                        <li><a href="#">SMS Service</a></li>
+                        <li><a href="#">Web Chat</a></li>
+                        <li><a href="#">Voice Assistant</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Service Status</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Huduma AI - Government of Kenya. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-button" onclick="toggleChat()">
+            <i data-lucide="message-circle" style="width: 28px; height: 28px;"></i>
+        </button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
+                    <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="bot" style="color: white; width: 24px; height: 24px;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1rem;">Huduma AI</h3>
+                        <p style="margin: 0; font-size: 0.875rem; opacity: 0.8;">Government Services Assistant</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" style="background: transparent; border: none; color: white; cursor: pointer;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-content">
+                        <i data-lucide="bot" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                        Hello! I'm Huduma AI, your government services assistant. How can I help you today?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">
+                    <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Chat functionality
+        let chatOpen = false;
+
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatOpen = !chatOpen;
+            chatWindow.style.display = chatOpen ? 'flex' : 'none';
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+
+                // Simulate bot response
+                setTimeout(() => {
+                    addMessage("I understand you need help with that. Let me connect you to the right service or provide the necessary information.", 'bot');
+                }, 1000);
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const icon = sender === 'bot' ? 'bot' : 'user';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <i data-lucide="${icon}" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    ${text}
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Re-initialize icons for new content
+            lucide.createIcons();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
