@@ -983,10 +983,22 @@
             </div>
             <div class="chat-input">
                 <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
-                <button onclick="sendMessage()">
+            
+                <!-- Voice Command Button -->
+                <button onclick="startVoiceRecognition()" title="Voice Command">
+                    <i data-lucide="mic" style="width: 16px; height: 16px;"></i>
+                </button>
+            
+                <!-- Image Upload Button -->
+                <label for="imageUpload" style="cursor: pointer;">
+                    <i data-lucide="image" style="width: 16px; height: 16px;"></i>
+                </label>
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            
+                <button onclick="sendMessage()" title="Send">
                     <i data-lucide="send" style="width: 16px; height: 16px;"></i>
                 </button>
-            </div>
+            </div>            
         </div>
     </div>
 
@@ -994,7 +1006,6 @@
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // Chat functionality
         let chatOpen = false;
 
         function toggleChat() {
@@ -1011,10 +1022,23 @@
                 addMessage(message, 'user');
                 input.value = '';
 
-                // Simulate bot response
-                setTimeout(() => {
-                    addMessage("I understand you need help with that. Let me connect you to the right service or provide the necessary information.", 'bot');
-                }, 1000);
+                // Send to Django backend
+                fetch('/chatbot-response/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addMessage(data.response, 'bot');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addMessage("Sorry, something went wrong.", 'bot');
+                });
             }
         }
 
@@ -1033,8 +1057,6 @@
 
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            // Re-initialize icons for new content
             lucide.createIcons();
         }
 
@@ -1043,6 +1065,53 @@
                 sendMessage();
             }
         }
+
+        // Voice Recognition
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert('Sorry, your browser does not support speech recognition.');
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('messageInput').value = transcript;
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Voice recognition error', event);
+            };
+
+            recognition.start();
+        }
+
+        // Image Upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                addMessage(`📷 You uploaded: ${file.name}`, 'user');
+                // Later: You can send this to the backend via FormData if needed
+            }
+        }
+
+        // Get CSRF Token for Django
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return '';
+        }
+
 
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
