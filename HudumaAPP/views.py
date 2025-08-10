@@ -27,7 +27,25 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 ## Reference the deployed Modal function by name
-generate_llm_response = modal.Function.lookup("huduma-ai", "generate_llm_response")
+# generate_llm_response = modal.Function.lookup("huduma-ai", "generate_llm_response")
+
+
+# Summarize conversation helper
+def summarize_conversation(model, summary, history):
+    summary_prompt = f"""
+    You are a memory assistant. Summarize the following conversation briefly,
+    keeping important facts, names, dates, and user preferences.
+
+    Existing summary:
+    {summary}
+
+    New conversation history:
+    {history}
+
+    Updated summary:
+    """
+    response = model.generate_content(summary_prompt)
+    return response.text.strip()
 
 
 def get_gemini_response(prompt):
