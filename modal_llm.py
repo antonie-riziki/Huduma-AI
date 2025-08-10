@@ -1,39 +1,23 @@
-from .models import *
-from uuid import UUID
-from django.core.files.storage import FileSystemStorage
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
-import africastalking
+
 import modal
 import os
-import sys
-import secrets
-import string
 import json
-import shutil
-import tempfile
-import google.generativeai as genai
-from dotenv import load_dotenv
 
-load_dotenv()
+app = modal.App("huduma-ai")
 
-sys.path.insert(1, './HudumaApp')
+vllm_image = (
+    modal.Image.debian_slim(python_version="3.10")
+    .pip_install("vllm", "transformers", "torch", "huggingface_hub")
+)
 
-# Initialize Google Generative AI
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+hf_cache = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
 
-
-## Reference the deployed Modal function by name
-generate_llm_response = modal.Function.lookup("huduma-ai", "generate_llm_response")
+MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+MODEL_REVISION = None
 
 
-def get_gemini_response(prompt):
-    model = genai.GenerativeModel("gemini-2.5-flash",
 
-        system_instruction=f"""
+HUDUMA_SYSTEM_PROMPT = """
 
         **Role & Scope**
         You are Huduma AI, a real-time, authoritative, Kenyan Government information assistant.
@@ -116,32 +100,23 @@ def get_gemini_response(prompt):
         - https://sha.go.ke/
 
         **Response Guidelines**
-        You are Huduma AI, an assistant that provides users with accurate, up-to-date, and verified information. Follow these guidelines:
+        Always perform a live search/scrape of the relevant official site(s) before responding.
 
-        1. Always perform a live search or scrape from official and authoritative sources before responding.  
-        - Use only verifiable, official sites (e.g., government portals, ministries, public notices).  
-        - Provide clickable links to the original source if:
-            • The user requests it explicitly, OR  
-            • The information is procedural, legal, or policy-related.
+        Provide short, direct, conversational answers with the latest confirmed details.
 
-        2. If the requested information is unavailable, unclear, or conflicting:
-        - Ask the user for clarification before proceeding.  
-        - If a page is temporarily down, attempt alternative official sources, archived versions, or cached pages.
+        Include a clickable link to the original source if:
 
-        3. Always mention the date and time when referencing live updates or breaking news.
+        The user requests it explicitly, or
 
-        4. Never guess — only provide facts that can be confirmed from official sources.
+        The information is procedural, legal, or policy-related.
 
-        5. If the information involves an application process:
-        - Ask the user: "Would you like me to help you apply for it?"  
-        - If the user responds affirmatively (yes, absolutely, definitely, etc.),  
-            initiate a guided form process by asking the application-specific questions step-by-step,  
-            collecting the necessary details until the form is complete.
+        If information is unavailable or unclear, ask the user for clarification before proceeding.
 
-        6. Keep conversation context efficient:
-        - Summarize and store key details from earlier messages rather than full transcripts.  
-        - Refer back to this summary when needed to maintain continuity while conserving memory.
+        If a page is temporarily down, attempt alternative official sources (archived pages, cached versions, or other ministries' public notices).
 
+        Always mention the date/time when referencing live updates or breaking news.
+
+        Do not guess — only provide verifiable facts from the above sources.
 
         **Example Behaviors**
         User: “How much is a passport renewal in Kenya?”
@@ -153,35 +128,39 @@ def get_gemini_response(prompt):
         User: “When will Nairobi property rates be due?”
         Huduma AI: “According to Nairobi County Government’s official portal, 2025 property rates payments are due by 31 March 2025. Check the payment portal here: Nairobi County Rates.”
 
-        """)
+"""
 
-    response = model.generate_content(
-        prompt,
-        generation_config=genai.GenerationConfig(
-            max_output_tokens=1000,
-            temperature=0.5,
-        )
 
+
+
+
+@app.function(
+    image=vllm_image,
+    gpu="H100:1",
+    volumes={"/cache": hf_cache}
+)
+def generate_llm_response(user_prompt: str) -> str:
+    import vllm
+
+    full_prompt = f"{HUDUMA_SYSTEM_PROMPT}\nUser: {user_prompt}\nAssistant:"
+
+    server = vllm.Server(
+        model=MODEL_NAME,
+        revision=MODEL_REVISION,
+        tokenizer_args={"cache_dir": "/cache"},
+        num_gpus=1
     )
 
-    return response.text
+    response = server.complete({"prompt": full_prompt, "max_tokens": 300})
+    return response["choices"][0]["text"].strip()
 
 
+@modal.web_endpoint(method="POST")
+def llm_http(request):
+    data = request.json()
+    user_prompt = data.get("prompt", "")
+    if not user_prompt:
+        return {"response": "No prompt provided."}
 
-@csrf_exempt
-def chatbot_response(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user_message = data.get('message', '')
-
-        if user_message:
-            bot_reply = get_gemini_response(user_message)
-            return JsonResponse({'response': bot_reply})
-        else:
-            return JsonResponse({'response': "Sorry, I didn't catch that."}, status=400)
-
-
-
-
-def index(request):
-    return render(request, 'index.html')
+    response_text = generate_llm_response.remote(user_prompt).get()
+    return {"response": response_text}
