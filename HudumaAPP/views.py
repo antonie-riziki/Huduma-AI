@@ -27,7 +27,7 @@ sys.path.insert(1, './HudumaApp')
 
 
 ## Reference the deployed Modal function by name
-generate_llm_response = modal.Function.lookup("huduma-ai", "generate_llm_response")
+# generate_llm_response = modal.Function.lookup("huduma-ai", "generate_llm_response")
 
 
 @csrf_exempt
