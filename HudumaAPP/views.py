@@ -18,6 +18,9 @@ import tempfile
 import google.generativeai as genai
 from dotenv import load_dotenv
 
+
+from rag_model import get_qa_chain, query_system
+
 load_dotenv()
 
 sys.path.insert(1, './HudumaApp')
@@ -186,17 +189,46 @@ def get_gemini_response(prompt):
 
 
 
+# @csrf_exempt
+# def chatbot_response(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         user_message = data.get('message', '')
+
+#         if user_message:
+#             bot_reply = get_gemini_response(user_message)
+#             return JsonResponse({'response': bot_reply})
+#         else:
+#             return JsonResponse({'response': "Sorry, I didn't catch that."}, status=400)
+
+
 @csrf_exempt
 def chatbot_response(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        user_message = data.get('message', '')
+        prompt = request.POST.get('prompt', '')
 
-        if user_message:
-            bot_reply = get_gemini_response(user_message)
-            return JsonResponse({'response': bot_reply})
-        else:
-            return JsonResponse({'response': "Sorry, I didn't catch that."}, status=400)
+        # Create a temp directory
+        temp_dir = tempfile.mkdtemp()
+
+        try:
+            # Save uploaded files to temp_dir
+            for file in request.FILES.getlist('files'):
+                fs = FileSystemStorage(location=temp_dir)
+                fs.save(file.name, file)
+
+            # Get QA chain and run query
+            qa_chain = get_qa_chain(temp_dir)
+            result = query_system(prompt, qa_chain)
+
+            # Return result as HTML or Markdown
+            # or text/markdown
+            return HttpResponse(result, content_type='text/html')
+        except Exception as e:
+            return HttpResponse(f"<strong>Error:</strong> {str(e)}", status=500)
+        finally:
+            # Clean up temp files
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    return HttpResponse("Invalid request method.", status=400)
 
 
 
