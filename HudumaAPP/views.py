@@ -16,14 +16,16 @@ import json
 import shutil
 import tempfile
 import google.generativeai as genai
+
+
 from dotenv import load_dotenv
-
-
-from rag_model import get_qa_chain, query_system
 
 load_dotenv()
 
 sys.path.insert(1, './HudumaApp')
+
+
+from rag_model import get_qa_chain, query_system
 
 # Initialize Google Generative AI
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -34,21 +36,21 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 # Summarize conversation helper
-def summarize_conversation(model, summary, history):
-    summary_prompt = f"""
-    You are a memory assistant. Summarize the following conversation briefly,
-    keeping important facts, names, dates, and user preferences.
+# def summarize_conversation(model, summary, history):
+#     summary_prompt = f"""
+#     You are a memory assistant. Summarize the following conversation briefly,
+#     keeping important facts, names, dates, and user preferences.
 
-    Existing summary:
-    {summary}
+#     Existing summary:
+#     {summary}
 
-    New conversation history:
-    {history}
+#     New conversation history:
+#     {history}
 
-    Updated summary:
-    """
-    response = model.generate_content(summary_prompt)
-    return response.text.strip()
+#     Updated summary:
+#     """
+#     response = model.generate_content(summary_prompt)
+#     return response.text.strip()
 
 
 def get_gemini_response(prompt):
